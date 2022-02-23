@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\ArticuloController;
-use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,8 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/test', function () {
-    return "hola mundo";
+    return "Necesita loguearse";
+})->name('login');
+
+Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
+
+Route::group(['middleware' => ["auth:sanctum"]], function () {
+    //rutas
+    Route::get('user-profile', [UserController::class, 'userProfile']);
+    Route::get('logout', [UserController::class, 'logout']);
 });
 
-Route::apiResource('articulos', ArticuloController::class)->middleware('auth');
+Route::apiResource('articulos', ArticuloController::class)->middleware('auth:sanctum');
 Route::apiResource('users', UserController::class);
